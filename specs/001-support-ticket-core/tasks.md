@@ -1,6 +1,6 @@
 ---
-description: "Task list for Support Ticket Core implementation"
----
+
+## description: "Task list for Support Ticket Core implementation"
 
 # Tasks: Support Ticket Core
 
@@ -18,6 +18,8 @@ description: "Task list for Support Ticket Core implementation"
 - **[Story]**: User story label (US1–US7) on story-phase tasks only
 - Exact file paths in every task
 
+
+
 ## Path Conventions
 
 - Backend: `backend/src/main/java/com/tickets/`, tests under `backend/src/test/java/com/tickets/`
@@ -25,17 +27,21 @@ description: "Task list for Support Ticket Core implementation"
 
 ---
 
+
+
 ## Phase 1: Setup (Shared Infrastructure)
 
 **Purpose**: Empty Spring + React workspaces with no secrets in git
 
-- [ ] T001 Create directory layout from plan.md: `backend/src/main/java/com/tickets/{api,security,domain,service,persistence}/`, `backend/src/main/resources/db/migration/`, `backend/src/test/java/com/tickets/{domain,api,integration}/`, `frontend/src/{api,auth,pages,components,__tests__}/`
-- [ ] T002 Initialize Java 21 Spring Boot 3.x Maven app in `backend/pom.xml` with Web, Data JPA, Validation, Security, Flyway, H2, PostgreSQL driver, OAuth2 JOSE/JWT; main class `backend/src/main/java/com/tickets/TicketApplication.java`
-- [ ] T003 [P] Initialize Vite + React (TypeScript) in `frontend/package.json` and `frontend/vite.config.ts`
-- [ ] T004 [P] Ignore secrets and build output in `.gitignore` (`backend/.env`, `frontend/.env`, `backend/data/`, `**/target/`, `frontend/node_modules/`); add `backend/.env.example` with placeholder keys only (`JWT_SECRET`, `OPERATOR_USERNAME`, `OPERATOR_PASSWORD`) and no real values
-- [ ] T005 [P] Configure 4-space indent and 120-character line length in `backend/pom.xml` (Spotless or Checkstyle)
+- [x] T001 Create directory layout from plan.md: `backend/src/main/java/com/tickets/{api,security,domain,service,persistence}/`, `backend/src/main/resources/db/migration/`, `backend/src/test/java/com/tickets/{domain,api,integration}/`, `frontend/src/{api,auth,pages,components,__tests__}/`
+- [x] T002 Initialize Java 21 Spring Boot 3.x Maven app in `backend/pom.xml` with Web, Data JPA, Validation, Security, Flyway, H2, PostgreSQL driver, OAuth2 JOSE/JWT; main class `backend/src/main/java/com/tickets/TicketApplication.java`
+- [x] T003 [P] Initialize Vite + React (TypeScript) in `frontend/package.json` and `frontend/vite.config.ts`
+- [x] T004 [P] Ignore secrets and build output in `.gitignore` (`backend/.env`, `frontend/.env`, `backend/data/`, `**/target/`, `frontend/node_modules/`); add `backend/.env.example` with placeholder keys only (`JWT_SECRET`, `OPERATOR_USERNAME`, `OPERATOR_PASSWORD`) and no real values
+- [x] T005 [P] Configure 4-space indent and 120-character line length in `backend/pom.xml` (Spotless or Checkstyle)
 
 ---
+
+
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
@@ -43,24 +49,26 @@ description: "Task list for Support Ticket Core implementation"
 
 **⚠️ CRITICAL**: No user story work until this phase is complete
 
-- [ ] T006 Configure `local` (file H2, restart-durable), `test` (in-memory H2), and `prod` (PostgreSQL) in `backend/src/main/resources/application.yml`, `application-local.yml`, `application-prod.yml`, `application-test.yml`; bind `JWT_SECRET`, `OPERATOR_USERNAME`, `OPERATOR_PASSWORD` from environment only
-- [ ] T007 Add Flyway `backend/src/main/resources/db/migration/V1__tickets.sql` with ticket columns: `id` UUID PK, `title` VARCHAR(200) NOT NULL, `description` VARCHAR(10000) or TEXT NOT NULL, `priority` VARCHAR NOT NULL, `assignee` VARCHAR(100) NULL, `status` VARCHAR NOT NULL, `created_at` timestamptz NOT NULL, `updated_at` timestamptz NOT NULL; indexes on `status` and `created_at DESC`
-- [ ] T008 Add Flyway `backend/src/main/resources/db/migration/V2__comments.sql` with `id` UUID PK, `ticket_id` UUID NOT NULL FK to tickets, `body` VARCHAR(4000) NOT NULL, `created_at` timestamptz NOT NULL; index `(ticket_id, created_at)`
-- [ ] T009 [P] Add enums `OPEN, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED` and `LOW, MEDIUM, HIGH` in `backend/src/main/java/com/tickets/domain/TicketStatus.java` and `TicketPriority.java`
-- [ ] T010 Map JPA `TicketEntity` in `backend/src/main/java/com/tickets/persistence/TicketEntity.java` (no Lombok `@Data`; equals/hashCode on `id` only after persist; fields match V1)
-- [ ] T011 [P] Map JPA `CommentEntity` in `backend/src/main/java/com/tickets/persistence/CommentEntity.java` (no `@Data`; FK to ticket; body + createdAt)
-- [ ] T012 Add `backend/src/main/java/com/tickets/persistence/TicketRepository.java` and `CommentRepository.java` (Spring Data JPA)
-- [ ] T013 Implement RFC 7807 `application/problem+json` in `backend/src/main/java/com/tickets/api/ProblemExceptionHandler.java` for HTTP 400 (`errors` field map), 401, 404, 422 (detail names current and requested status); parameterized SLF4J only — never log passwords, tokens, or full ticket bodies
-- [ ] T014 Implement JWT login `POST /api/auth/login` and Bearer filter so `/api/tickets/**` requires authentication in `backend/src/main/java/com/tickets/security/JwtService.java`, `AuthController.java`, `JwtAuthenticationFilter.java`, `SecurityConfig.java`; unauthenticated ticket calls return 401; all operators share the same permissions (no roles)
-- [ ] T015 Restrict CORS to the configured frontend origin (not `*`) in `backend/src/main/java/com/tickets/security/SecurityConfig.java`
-- [ ] T016 Proxy `/api` to the backend in `frontend/vite.config.ts`
-- [ ] T017 Implement login client and in-memory plus `sessionStorage` token (not `localStorage`) in `frontend/src/auth/AuthContext.tsx` and `frontend/src/api/client.ts`
-- [ ] T018 Add login UI in `frontend/src/pages/LoginPage.tsx` and route gate in `frontend/src/App.tsx`
-- [ ] T019 Write failing contract tests for login 200 and ticket routes 401 without token in `backend/src/test/java/com/tickets/api/AuthContractTest.java`
+- [x] T006 Configure `local` (file H2, restart-durable), `test` (in-memory H2), and `prod` (PostgreSQL) in `backend/src/main/resources/application.yml`, `application-local.yml`, `application-prod.yml`, `application-test.yml`; bind `JWT_SECRET`, `OPERATOR_USERNAME`, `OPERATOR_PASSWORD` from environment only
+- [x] T007 Add Flyway `backend/src/main/resources/db/migration/V1__tickets.sql` with ticket columns: `id` UUID PK, `title` VARCHAR(200) NOT NULL, `description` VARCHAR(10000) or TEXT NOT NULL, `priority` VARCHAR NOT NULL, `assignee` VARCHAR(100) NULL, `status` VARCHAR NOT NULL, `created_at` timestamptz NOT NULL, `updated_at` timestamptz NOT NULL; indexes on `status` and `created_at DESC`
+- [x] T008 Add Flyway `backend/src/main/resources/db/migration/V2__comments.sql` with `id` UUID PK, `ticket_id` UUID NOT NULL FK to tickets, `body` VARCHAR(4000) NOT NULL, `created_at` timestamptz NOT NULL; index `(ticket_id, created_at)`
+- [x] T009 [P] Add enums `OPEN, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED` and `LOW, MEDIUM, HIGH` in `backend/src/main/java/com/tickets/domain/TicketStatus.java` and `TicketPriority.java`
+- [x] T010 Map JPA `TicketEntity` in `backend/src/main/java/com/tickets/persistence/TicketEntity.java` (no Lombok `@Data`; equals/hashCode on `id` only after persist; fields match V1)
+- [x] T011 [P] Map JPA `CommentEntity` in `backend/src/main/java/com/tickets/persistence/CommentEntity.java` (no `@Data`; FK to ticket; body + createdAt)
+- [x] T012 Add `backend/src/main/java/com/tickets/persistence/TicketRepository.java` and `CommentRepository.java` (Spring Data JPA)
+- [x] T013 Implement RFC 7807 `application/problem+json` in `backend/src/main/java/com/tickets/api/ProblemExceptionHandler.java` for HTTP 400 (`errors` field map), 401, 404, 422 (detail names current and requested status); parameterized SLF4J only — never log passwords, tokens, or full ticket bodies
+- [x] T014 Implement JWT login `POST /api/auth/login` and Bearer filter so `/api/tickets/**` requires authentication in `backend/src/main/java/com/tickets/security/JwtService.java`, `AuthController.java`, `JwtAuthenticationFilter.java`, `SecurityConfig.java`; unauthenticated ticket calls return 401; all operators share the same permissions (no roles)
+- [x] T015 Restrict CORS to the configured frontend origin (not `*`) in `backend/src/main/java/com/tickets/security/SecurityConfig.java`
+- [x] T016 Proxy `/api` to the backend in `frontend/vite.config.ts`
+- [x] T017 Implement login client and in-memory plus `sessionStorage` token (not `localStorage`) in `frontend/src/auth/AuthContext.tsx` and `frontend/src/api/client.ts`
+- [x] T018 Add login UI in `frontend/src/pages/LoginPage.tsx` and route gate in `frontend/src/App.tsx`
+- [x] T019 Write failing contract tests for login 200 and ticket routes 401 without token in `backend/src/test/java/com/tickets/api/AuthContractTest.java`
 
 **Checkpoint**: Foundation ready — user stories may start
 
 ---
+
+
 
 ## Phase 3: User Story 1 - Create a support ticket (Priority: P1) 🎯 MVP
 
@@ -72,21 +80,25 @@ description: "Task list for Support Ticket Core implementation"
 
 > Write these FIRST and ensure they FAIL before implementation
 
-- [ ] T020 [P] [US1] Write failing contract tests for `POST /api/tickets` in `backend/src/test/java/com/tickets/api/CreateTicketContractTest.java`: 201 with status `OPEN`; 400 when title or description is blank/whitespace-only; 400 unknown priority; 401 without token
-- [ ] T021 [P] [US1] Write failing integration test that creates a ticket then reloads from a file-based store in `backend/src/test/java/com/tickets/integration/TicketPersistenceIT.java`
+- [x] T020 [P] [US1] Write failing contract tests for `POST /api/tickets` in `backend/src/test/java/com/tickets/api/CreateTicketContractTest.java`: 201 with status `OPEN`; 400 when title or description is blank/whitespace-only; 400 unknown priority; 401 without token
+- [x] T021 [P] [US1] Write failing integration test that creates a ticket then reloads from a file-based store in `backend/src/test/java/com/tickets/integration/TicketPersistenceIT.java`
+
+
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Add `CreateTicketRequest` in `backend/src/main/java/com/tickets/api/CreateTicketRequest.java`: title required trim length 1–200; description required trim length 1–10,000; priority required `LOW|MEDIUM|HIGH`; assignee optional, if present trim length 1–100, blank/whitespace treated as unassigned
-- [ ] T023 [US1] Add `TicketResponse` DTO (never return `TicketEntity`) in `backend/src/main/java/com/tickets/api/TicketResponse.java`
-- [ ] T024 [US1] Implement `create` in `backend/src/main/java/com/tickets/service/TicketService.java`: new tickets MUST have status `OPEN`; set `createdAt`/`updatedAt`; constructor injection, `final` collaborators
-- [ ] T025 [US1] Implement `POST /api/tickets` in `backend/src/main/java/com/tickets/api/TicketController.java` returning 201 and DTO
-- [ ] T026 [US1] Add create-ticket form in `frontend/src/pages/TicketCreatePage.tsx` posting via `frontend/src/api/tickets.ts`
-- [ ] T027 [US1] Confirm T020–T021 pass; trim whitespace-only fields as blank per spec edge cases
+- [x] T022 [US1] Add `CreateTicketRequest` in `backend/src/main/java/com/tickets/api/CreateTicketRequest.java`: title required trim length 1–200; description required trim length 1–10,000; priority required `LOW|MEDIUM|HIGH`; assignee optional, if present trim length 1–100, blank/whitespace treated as unassigned
+- [x] T023 [US1] Add `TicketResponse` DTO (never return `TicketEntity`) in `backend/src/main/java/com/tickets/api/TicketResponse.java`
+- [x] T024 [US1] Implement `create` in `backend/src/main/java/com/tickets/service/TicketService.java`: new tickets MUST have status `OPEN`; set `createdAt`/`updatedAt`; constructor injection, `final` collaborators
+- [x] T025 [US1] Implement `POST /api/tickets` in `backend/src/main/java/com/tickets/api/TicketController.java` returning 201 and DTO
+- [x] T026 [US1] Add create-ticket form in `frontend/src/pages/TicketCreatePage.tsx` posting via `frontend/src/api/tickets.ts`
+- [x] T027 [US1] Confirm T020–T021 pass; trim whitespace-only fields as blank per spec edge cases
 
 **Checkpoint**: US1 independently testable
 
 ---
+
+
 
 ## Phase 4: User Story 2 - Browse and open tickets (Priority: P1)
 
@@ -96,20 +108,24 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 2
 
-- [ ] T028 [P] [US2] Write failing contract tests in `backend/src/test/java/com/tickets/api/GetTicketsContractTest.java` for `GET /api/tickets` (page metadata: `content`, `page`, `size`, `totalElements`, `totalPages`; default size 20 max 100) and `GET /api/tickets/{ticketId}` 200 vs 404
-- [ ] T029 [P] [US2] Write failing UI test for not-found copy in `frontend/src/__tests__/TicketDetailNotFound.test.tsx`
+- [x] T028 [P] [US2] Write failing contract tests in `backend/src/test/java/com/tickets/api/GetTicketsContractTest.java` for `GET /api/tickets` (page metadata: `content`, `page`, `size`, `totalElements`, `totalPages`; default size 20 max 100) and `GET /api/tickets/{ticketId}` 200 vs 404
+- [x] T029 [P] [US2] Write failing UI test for not-found copy in `frontend/src/__tests__/TicketDetailNotFound.test.tsx`
+
+
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Add `TicketSummary` and `TicketPage` DTOs in `backend/src/main/java/com/tickets/api/TicketPageResponse.java`; list ordered by `createdAt` descending
-- [ ] T031 [US2] Implement paginated `list` and `getById` in `backend/src/main/java/com/tickets/service/TicketService.java` using Spring Data pages (`page` 0-based, `size` default 20 maximum 100)
-- [ ] T032 [US2] Implement `GET /api/tickets` and `GET /api/tickets/{ticketId}` in `backend/src/main/java/com/tickets/api/TicketController.java`; missing ticket → 404 Problem Detail
-- [ ] T033 [US2] Add list and detail pages in `frontend/src/pages/TicketListPage.tsx` and `frontend/src/pages/TicketDetailPage.tsx` with pagination controls
-- [ ] T034 [US2] Load comments as empty array on detail until US5 (`TicketDetailResponse` in `backend/src/main/java/com/tickets/api/TicketDetailResponse.java`)
+- [x] T030 [US2] Add `TicketSummary` and `TicketPage` DTOs in `backend/src/main/java/com/tickets/api/TicketPageResponse.java`; list ordered by `createdAt` descending
+- [x] T031 [US2] Implement paginated `list` and `getById` in `backend/src/main/java/com/tickets/service/TicketService.java` using Spring Data pages (`page` 0-based, `size` default 20 maximum 100)
+- [x] T032 [US2] Implement `GET /api/tickets` and `GET /api/tickets/{ticketId}` in `backend/src/main/java/com/tickets/api/TicketController.java`; missing ticket → 404 Problem Detail
+- [x] T033 [US2] Add list and detail pages in `frontend/src/pages/TicketListPage.tsx` and `frontend/src/pages/TicketDetailPage.tsx` with pagination controls
+- [x] T034 [US2] Load comments as empty array on detail until US5 (`TicketDetailResponse` in `backend/src/main/java/com/tickets/api/TicketDetailResponse.java`)
 
 **Checkpoint**: US1 and US2 work independently
 
 ---
+
+
 
 ## Phase 5: User Story 3 - Enforce ticket status workflow (Priority: P1)
 
@@ -119,20 +135,24 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 3
 
-- [ ] T035 [P] [US3] Write failing unit tests in `backend/src/test/java/com/tickets/domain/TicketStatusMachineTest.java` covering allowed pairs, same-status no-op, and forbidden set including `CLOSED→OPEN`, `RESOLVED→OPEN`, `CANCELLED→OPEN`, `OPEN→RESOLVED`, `OPEN→CLOSED`, `IN_PROGRESS→OPEN`, `IN_PROGRESS→CLOSED`, `RESOLVED→IN_PROGRESS`, `RESOLVED→CANCELLED`
-- [ ] T036 [P] [US3] Write failing contract tests for `POST /api/tickets/{ticketId}/status` in `backend/src/test/java/com/tickets/api/StatusTransitionContractTest.java` (200 allowed, 422 illegal with detail naming current and requested status, 400 unknown status token, 404 missing ticket)
+- [x] T035 [P] [US3] Write failing unit tests in `backend/src/test/java/com/tickets/domain/TicketStatusMachineTest.java` covering allowed pairs, same-status no-op, and forbidden set including `CLOSED→OPEN`, `RESOLVED→OPEN`, `CANCELLED→OPEN`, `OPEN→RESOLVED`, `OPEN→CLOSED`, `IN_PROGRESS→OPEN`, `IN_PROGRESS→CLOSED`, `RESOLVED→IN_PROGRESS`, `RESOLVED→CANCELLED`
+- [x] T036 [P] [US3] Write failing contract tests for `POST /api/tickets/{ticketId}/status` in `backend/src/test/java/com/tickets/api/StatusTransitionContractTest.java` (200 allowed, 422 illegal with detail naming current and requested status, 400 unknown status token, 404 missing ticket)
+
+
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Implement `TicketStatusMachine` in `backend/src/main/java/com/tickets/domain/TicketStatusMachine.java` consulted only from the service; allowed table per data-model.md; `from == to` allowed
-- [ ] T038 [US3] Add `StatusTransitionRequest` in `backend/src/main/java/com/tickets/api/StatusTransitionRequest.java` (required `status` enum)
-- [ ] T039 [US3] Implement `transition` in `backend/src/main/java/com/tickets/service/TicketService.java` against **persisted** status at write time; illegal → 422 no update; success updates `updatedAt` except same-status no-op MAY skip write
-- [ ] T040 [US3] Implement `POST /api/tickets/{ticketId}/status` in `backend/src/main/java/com/tickets/api/TicketController.java`
-- [ ] T041 [US3] Add status actions on `frontend/src/pages/TicketDetailPage.tsx` (UI may hide illegal targets; server remains source of truth)
+- [x] T037 [US3] Implement `TicketStatusMachine` in `backend/src/main/java/com/tickets/domain/TicketStatusMachine.java` consulted only from the service; allowed table per data-model.md; `from == to` allowed
+- [x] T038 [US3] Add `StatusTransitionRequest` in `backend/src/main/java/com/tickets/api/StatusTransitionRequest.java` (required `status` enum)
+- [x] T039 [US3] Implement `transition` in `backend/src/main/java/com/tickets/service/TicketService.java` against **persisted** status at write time; illegal → 422 no update; success updates `updatedAt` except same-status no-op MAY skip write
+- [x] T040 [US3] Implement `POST /api/tickets/{ticketId}/status` in `backend/src/main/java/com/tickets/api/TicketController.java`
+- [x] T041 [US3] Add status actions on `frontend/src/pages/TicketDetailPage.tsx` (UI may hide illegal targets; server remains source of truth)
 
 **Checkpoint**: Status policy holds even if the UI is bypassed
 
 ---
+
+
 
 ## Phase 6: User Story 4 - Update ticket details (Priority: P2)
 
@@ -142,18 +162,22 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 4
 
-- [ ] T042 [P] [US4] Write failing contract tests in `backend/src/test/java/com/tickets/api/UpdateTicketContractTest.java`: PATCH updates fields and keeps status; `status` in body does not change status; 400 invalid title/description/priority; 404 missing id; null assignee clears assignee
+- [x] T042 [P] [US4] Write failing contract tests in `backend/src/test/java/com/tickets/api/UpdateTicketContractTest.java`: PATCH updates fields and keeps status; `status` in body does not change status; 400 invalid title/description/priority; 404 missing id; null assignee clears assignee
+
+
 
 ### Implementation for User Story 4
 
-- [ ] T043 [US4] Add `UpdateTicketRequest` in `backend/src/main/java/com/tickets/api/UpdateTicketRequest.java` with optional title (1–200 after trim), description (1–10,000), priority enum, assignee (1–100 or null to unassign); **must not include status**
-- [ ] T044 [US4] Implement `updateDetails` in `backend/src/main/java/com/tickets/service/TicketService.java` (last accepted write wins; never apply status from this method)
-- [ ] T045 [US4] Implement `PATCH /api/tickets/{ticketId}` in `backend/src/main/java/com/tickets/api/TicketController.java`
-- [ ] T046 [US4] Add edit form on `frontend/src/pages/TicketDetailPage.tsx` or `frontend/src/pages/TicketEditPage.tsx`
+- [x] T043 [US4] Add `UpdateTicketRequest` in `backend/src/main/java/com/tickets/api/UpdateTicketRequest.java` with optional title (1–200 after trim), description (1–10,000), priority enum, assignee (1–100 or null to unassign); **must not include status**
+- [x] T044 [US4] Implement `updateDetails` in `backend/src/main/java/com/tickets/service/TicketService.java` (last accepted write wins; never apply status from this method)
+- [x] T045 [US4] Implement `PATCH /api/tickets/{ticketId}` in `backend/src/main/java/com/tickets/api/TicketController.java`
+- [x] T046 [US4] Add edit form on `frontend/src/pages/TicketDetailPage.tsx` or `frontend/src/pages/TicketEditPage.tsx`
 
 **Checkpoint**: Field edits cannot smuggle status changes
 
 ---
+
+
 
 ## Phase 7: User Story 5 - Comment on a ticket (Priority: P2)
 
@@ -163,18 +187,22 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 5
 
-- [ ] T047 [P] [US5] Write failing contract tests in `backend/src/test/java/com/tickets/api/CommentContractTest.java`: `POST /api/tickets/{ticketId}/comments` 201; 400 blank/whitespace body; 404 missing ticket; comment on `CLOSED`/`CANCELLED` succeeds and ticket status unchanged; detail lists comments oldest-first then `id`
+- [x] T047 [P] [US5] Write failing contract tests in `backend/src/test/java/com/tickets/api/CommentContractTest.java`: `POST /api/tickets/{ticketId}/comments` 201; 400 blank/whitespace body; 404 missing ticket; comment on `CLOSED`/`CANCELLED` succeeds and ticket status unchanged; detail lists comments oldest-first then `id`
+
+
 
 ### Implementation for User Story 5
 
-- [ ] T048 [US5] Add `AddCommentRequest` and `CommentResponse` in `backend/src/main/java/com/tickets/api/AddCommentRequest.java` and `CommentResponse.java`; body required trim length 1–4,000
-- [ ] T049 [US5] Implement `addComment` and include comments on get-by-id in `backend/src/main/java/com/tickets/service/TicketService.java` (ticket `updatedAt` MAY stay unchanged)
-- [ ] T050 [US5] Implement `POST /api/tickets/{ticketId}/comments` in `backend/src/main/java/com/tickets/api/TicketController.java`
-- [ ] T051 [US5] Render and submit comments on `frontend/src/pages/TicketDetailPage.tsx` and `frontend/src/components/CommentList.tsx`
+- [x] T048 [US5] Add `AddCommentRequest` and `CommentResponse` in `backend/src/main/java/com/tickets/api/AddCommentRequest.java` and `CommentResponse.java`; body required trim length 1–4,000
+- [x] T049 [US5] Implement `addComment` and include comments on get-by-id in `backend/src/main/java/com/tickets/service/TicketService.java` (ticket `updatedAt` MAY stay unchanged)
+- [x] T050 [US5] Implement `POST /api/tickets/{ticketId}/comments` in `backend/src/main/java/com/tickets/api/TicketController.java`
+- [x] T051 [US5] Render and submit comments on `frontend/src/pages/TicketDetailPage.tsx` and `frontend/src/components/CommentList.tsx`
 
 **Checkpoint**: Conversation lives on the ticket record
 
 ---
+
+
 
 ## Phase 8: User Story 6 - Search and filter the queue (Priority: P3)
 
@@ -184,17 +212,21 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 6
 
-- [ ] T052 [P] [US6] Write failing contract tests in `backend/src/test/java/com/tickets/api/SearchFilterContractTest.java`: `q` matches title or description case-insensitively; blank `q` means no keyword predicate; `status` filters exactly one status; `q` AND `status`; zero matches return 200 empty `content`
+- [x] T052 [P] [US6] Write failing contract tests in `backend/src/test/java/com/tickets/api/SearchFilterContractTest.java`: `q` matches title or description case-insensitively; blank `q` means no keyword predicate; `status` filters exactly one status; `q` AND `status`; zero matches return 200 empty `content`
+
+
 
 ### Implementation for User Story 6
 
-- [ ] T053 [US6] Add list query methods in `backend/src/main/java/com/tickets/persistence/TicketRepository.java` (no N+1; paginated)
-- [ ] T054 [US6] Pass `q` and `status` from `GET /api/tickets` in `backend/src/main/java/com/tickets/api/TicketController.java` and `TicketService.java`
-- [ ] T055 [US6] Add search and status filter plus empty-state copy on `frontend/src/pages/TicketListPage.tsx`
+- [x] T053 [US6] Add list query methods in `backend/src/main/java/com/tickets/persistence/TicketRepository.java` (no N+1; paginated)
+- [x] T054 [US6] Pass `q` and `status` from `GET /api/tickets` in `backend/src/main/java/com/tickets/api/TicketController.java` and `TicketService.java`
+- [x] T055 [US6] Add search and status filter plus empty-state copy on `frontend/src/pages/TicketListPage.tsx`
 
 **Checkpoint**: Operators can find a known ticket among mixed records
 
 ---
+
+
 
 ## Phase 9: User Story 7 - Understand failures in the interface (Priority: P2)
 
@@ -204,17 +236,21 @@ description: "Task list for Support Ticket Core implementation"
 
 ### Tests for User Story 7
 
-- [ ] T056 [P] [US7] Write failing RTL tests in `frontend/src/__tests__/ProblemDetailsDisplay.test.tsx` for field-level 400 `errors`, 422 `detail` on illegal transition, and 404 not-found (no false success toast)
+- [x] T056 [P] [US7] Write failing RTL tests in `frontend/src/__tests__/ProblemDetailsDisplay.test.tsx` for field-level 400 `errors`, 422 `detail` on illegal transition, and 404 not-found (no false success toast)
+
+
 
 ### Implementation for User Story 7
 
-- [ ] T057 [US7] Map `application/problem+json` to field errors and banners in `frontend/src/api/problem.ts` and `frontend/src/components/ErrorBanner.tsx`
-- [ ] T058 [US7] Wire mapping into create, edit, status, and comment forms so refused submits do not claim save succeeded
-- [ ] T059 [US7] Show not-found explanation on `frontend/src/pages/TicketDetailPage.tsx` when GET returns 404 (not a blank page)
+- [x] T057 [US7] Map `application/problem+json` to field errors and banners in `frontend/src/api/problem.ts` and `frontend/src/components/ErrorBanner.tsx`
+- [x] T058 [US7] Wire mapping into create, edit, status, and comment forms so refused submits do not claim save succeeded
+- [x] T059 [US7] Show not-found explanation on `frontend/src/pages/TicketDetailPage.tsx` when GET returns 404 (not a blank page)
 
 **Checkpoint**: Operators see server reasons, including when the UI is bypassed for status
 
 ---
+
+
 
 ## Phase 10: Polish & Cross-Cutting Concerns
 
@@ -227,7 +263,11 @@ description: "Task list for Support Ticket Core implementation"
 
 ---
 
+
+
 ## Dependencies & Execution Order
+
+
 
 ### Phase Dependencies
 
@@ -235,6 +275,8 @@ description: "Task list for Support Ticket Core implementation"
 - **Foundational (Phase 2)**: Depends on Setup — BLOCKS all user stories
 - **US1–US7 (Phases 3–9)**: Depend on Foundational; sequential by priority is safest because later stories assume tickets exist
 - **Polish (Phase 10)**: After stories you intend to ship
+
+
 
 ### User Story Dependencies
 
@@ -246,10 +288,14 @@ description: "Task list for Support Ticket Core implementation"
 - **US6 (P3)**: After US2 list endpoint
 - **US7 (P2)**: After at least US1 errors exist; full value after US3 422 and US2 404
 
+
+
 ### Within Each User Story
 
 - Tests MUST be written and FAIL before implementation
 - DTOs/entities before services before controllers before UI
+
+
 
 ### Parallel Opportunities
 
@@ -261,6 +307,8 @@ description: "Task list for Support Ticket Core implementation"
 
 ---
 
+
+
 ## Parallel Example: User Story 1
 
 ```bash
@@ -271,6 +319,8 @@ Task: "TicketPersistenceIT.java"
 # After tests fail, implement request DTO then service then controller then UI (sequential on overlapping files)
 ```
 
+
+
 ## Parallel Example: User Story 3
 
 ```bash
@@ -280,7 +330,11 @@ Task: "StatusTransitionContractTest.java"
 
 ---
 
+
+
 ## Implementation Strategy
+
+
 
 ### MVP First (User Story 1 Only)
 
@@ -289,6 +343,8 @@ Task: "StatusTransitionContractTest.java"
 3. Phase 3 US1
 4. **STOP and VALIDATE**: create, validation errors, restart durability, 401
 5. Demo create-ticket only
+
+
 
 ### Incremental Delivery
 
@@ -299,6 +355,8 @@ Task: "StatusTransitionContractTest.java"
 5. US4 updates → US5 comments → US7 error UX → US6 search/filter
 6. Polish + quickstart.md
 
+
+
 ### Parallel Team Strategy
 
 1. Together: Phases 1–2
@@ -306,6 +364,8 @@ Task: "StatusTransitionContractTest.java"
 3. Integrate on `cursor/001-support-ticket-core`
 
 ---
+
+
 
 ## Notes
 

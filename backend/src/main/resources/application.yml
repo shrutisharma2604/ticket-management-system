@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: ticket-management-backend
+  profiles:
+    default: local
+  flyway:
+    enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+app:
+  security:
+    jwt-secret: ${JWT_SECRET}
+    operator-username: ${OPERATOR_USERNAME}
+    operator-password: ${OPERATOR_PASSWORD}
+    token-ttl: PT8H
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:5173}

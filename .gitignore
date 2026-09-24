@@ -22,3 +22,15 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Build output and dependencies
+**/target/
+frontend/node_modules/
+frontend/dist/
+
+# Local runtime data
+backend/data/
+
+# Environment files may contain credentials
+backend/.env
+frontend/.env
