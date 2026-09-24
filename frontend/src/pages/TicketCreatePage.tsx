@@ -37,52 +37,72 @@ export function TicketCreatePage() {
     }
 
     return (
-        <main>
-            <Link to="/">Back to tickets</Link>
-            <h1>Create support ticket</h1>
-            <form onSubmit={handleSubmit} noValidate>
-                <label htmlFor="title">Title</label>
-                <input
-                    id="title"
-                    name="title"
-                    value={title}
-                    onChange={(event) => setTitle(event.target.value)}
-                />
+        <main className="mx-auto" style={{ maxWidth: "760px" }}>
+            <Link className="text-decoration-none" to="/">← Back to tickets</Link>
+            <div className="card border-0 shadow-sm mt-3">
+                <div className="card-body p-4 p-md-5">
+                    <h1 className="h3 mb-4">Create support ticket</h1>
+                    <form onSubmit={handleSubmit} noValidate>
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor="title">Title</label>
+                            <input
+                                className="form-control"
+                                id="title"
+                                name="title"
+                                value={title}
+                                onChange={(event) => setTitle(event.target.value)}
+                            />
+                        </div>
 
-                <label htmlFor="description">Description</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    value={description}
-                    onChange={(event) => setDescription(event.target.value)}
-                />
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor="description">Description</label>
+                            <textarea
+                                className="form-control"
+                                id="description"
+                                name="description"
+                                rows={5}
+                                value={description}
+                                onChange={(event) => setDescription(event.target.value)}
+                            />
+                        </div>
 
-                <label htmlFor="priority">Priority</label>
-                <select
-                    id="priority"
-                    name="priority"
-                    value={priority}
-                    onChange={(event) => setPriority(event.target.value as TicketPriority)}
-                >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                </select>
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor="priority">Priority</label>
+                            <select
+                                className="form-select"
+                                id="priority"
+                                name="priority"
+                                value={priority}
+                                onChange={(event) => setPriority(event.target.value as TicketPriority)}
+                            >
+                                <option value="LOW">Low</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HIGH">High</option>
+                            </select>
+                        </div>
 
-                <label htmlFor="assignee">Assignee (optional)</label>
-                <input
-                    id="assignee"
-                    name="assignee"
-                    value={assignee}
-                    onChange={(event) => setAssignee(event.target.value)}
-                />
+                        <div className="mb-4">
+                            <label className="form-label" htmlFor="assignee">Assignee (optional)</label>
+                            <input
+                                className="form-control"
+                                id="assignee"
+                                name="assignee"
+                                value={assignee}
+                                onChange={(event) => setAssignee(event.target.value)}
+                            />
+                        </div>
 
-                <ErrorBanner error={error} />
+                        <ErrorBanner error={error} />
 
-                <button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Creating…" : "Create ticket"}
-                </button>
-            </form>
+                        <div className="d-flex justify-content-end gap-2">
+                            <Link className="btn btn-outline-secondary" to="/">Cancel</Link>
+                            <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? "Creating…" : "Create ticket"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </main>
     );
 }

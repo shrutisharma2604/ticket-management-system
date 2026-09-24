@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 
 import { ApiError } from "../api/client";
 import { listTickets, type TicketPage, type TicketStatus } from "../api/tickets";
-import { useAuth } from "../auth/AuthContext";
 
 export function TicketListPage() {
-    const { logout } = useAuth();
     const [pageIndex, setPageIndex] = useState(0);
     const [ticketPage, setTicketPage] = useState<TicketPage | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -47,75 +45,125 @@ export function TicketListPage() {
 
     return (
         <main>
-            <h1>Support tickets</h1>
-            <nav>
-                <Link to="/tickets/new">Create ticket</Link>
-                <button type="button" onClick={logout}>Sign out</button>
-            </nav>
-            <form onSubmit={submitFilters}>
-                <label htmlFor="ticket-search">Search</label>
-                <input
-                    id="ticket-search"
-                    value={keywordInput}
-                    onChange={(event) => setKeywordInput(event.target.value)}
-                />
-                <label htmlFor="status-filter">Status</label>
-                <select
-                    id="status-filter"
-                    value={statusInput}
-                    onChange={(event) => setStatusInput(event.target.value as TicketStatus | "")}
-                >
-                    <option value="">All statuses</option>
-                    <option value="OPEN">Open</option>
-                    <option value="IN_PROGRESS">In progress</option>
-                    <option value="RESOLVED">Resolved</option>
-                    <option value="CLOSED">Closed</option>
-                    <option value="CANCELLED">Cancelled</option>
-                </select>
-                <button type="submit">Apply</button>
-            </form>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 className="h3 mb-1">Support tickets</h1>
+                    <p className="text-body-secondary mb-0">View and manage customer support requests.</p>
+                </div>
+                <Link className="btn btn-primary" to="/tickets/new">Create ticket</Link>
+            </div>
+
+            <div className="card border-0 shadow-sm mb-4">
+                <div className="card-body">
+                    <form className="row g-3 align-items-end" onSubmit={submitFilters}>
+                        <div className="col-md-7">
+                            <label className="form-label" htmlFor="ticket-search">Search</label>
+                            <input
+                                className="form-control"
+                                id="ticket-search"
+                                value={keywordInput}
+                                onChange={(event) => setKeywordInput(event.target.value)}
+                            />
+                        </div>
+                        <div className="col-md-3">
+                            <label className="form-label" htmlFor="status-filter">Status</label>
+                            <select
+                                className="form-select"
+                                id="status-filter"
+                                value={statusInput}
+                                onChange={(event) => setStatusInput(event.target.value as TicketStatus | "")}
+                            >
+                                <option value="">All statuses</option>
+                                <option value="OPEN">Open</option>
+                                <option value="IN_PROGRESS">In progress</option>
+                                <option value="RESOLVED">Resolved</option>
+                                <option value="CLOSED">Closed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                        </div>
+                        <div className="col-md-2 d-grid">
+                            <button className="btn btn-outline-primary" type="submit">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             {isLoading && <p>Loading tickets…</p>}
-            {error !== null && <p role="alert">{error}</p>}
+            {error !== null && <p className="alert alert-danger" role="alert">{error}</p>}
             {!isLoading && error === null && ticketPage !== null && ticketPage.content.length === 0 && (
-                <p>{hasFilters ? "No matching tickets." : "No tickets yet."}</p>
+                <div className="card border-0 shadow-sm">
+                    <div className="card-body text-center text-body-secondary py-5">
+                        {hasFilters ? "No matching tickets." : "No tickets yet."}
+                    </div>
+                </div>
             )}
             {!isLoading && ticketPage !== null && ticketPage.content.length > 0 && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Priority</th>
-                            <th>Assignee</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {ticketPage.content.map((ticket) => (
-                            <tr key={ticket.id}>
-                                <td>
-                                    <Link to={`/tickets/${ticket.id}`}>{ticket.title}</Link>
-                                </td>
-                                <td>{ticket.priority}</td>
-                                <td>{ticket.assignee ?? "Unassigned"}</td>
-                                <td>{ticket.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div className="card border-0 shadow-sm overflow-hidden">
+                    <div className="table-responsive">
+                        <table className="table table-hover align-middle mb-0">
+                            <thead className="table-light">
+                                <tr>
+                                    <th className="px-4 py-3">Title</th>
+                                    <th className="py-3">Priority</th>
+                                    <th className="py-3">Assignee</th>
+                                    <th className="py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {ticketPage.content.map((ticket) => (
+                                    <tr key={ticket.id}>
+                                        <td className="px-4 py-3">
+                                            <Link className="fw-semibold text-decoration-none" to={`/tickets/${ticket.id}`}>
+                                                {ticket.title}
+                                            </Link>
+                                        </td>
+                                        <td>{ticket.priority}</td>
+                                        <td>{ticket.assignee ?? "Unassigned"}</td>
+                                        <td>
+                                            <span className={`badge ${statusBadgeClass(ticket.status)}`}>
+                                                {ticket.status.replaceAll("_", " ")}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             )}
 
-            <div>
-                <button type="button" disabled={!canGoPrevious} onClick={() => setPageIndex((current) => current - 1)}>
+            <div className="d-flex justify-content-between align-items-center mt-4">
+                <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    disabled={!canGoPrevious}
+                    onClick={() => setPageIndex((current) => current - 1)}
+                >
                     Previous
                 </button>
-                <span>
+                <span className="text-body-secondary">
                     Page {totalPages === 0 ? 0 : pageIndex + 1} of {totalPages}
                 </span>
-                <button type="button" disabled={!canGoNext} onClick={() => setPageIndex((current) => current + 1)}>
+                <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    disabled={!canGoNext}
+                    onClick={() => setPageIndex((current) => current + 1)}
+                >
                     Next
                 </button>
             </div>
         </main>
     );
+}
+
+function statusBadgeClass(status: TicketStatus): string {
+    const classes: Record<TicketStatus, string> = {
+        OPEN: "text-bg-primary",
+        IN_PROGRESS: "text-bg-warning",
+        RESOLVED: "text-bg-success",
+        CLOSED: "text-bg-secondary",
+        CANCELLED: "text-bg-danger",
+    };
+    return classes[status];
 }

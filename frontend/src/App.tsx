@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { LoginPage } from "./pages/LoginPage";
@@ -25,6 +25,26 @@ export function App() {
 }
 
 function ProtectedRoute() {
-    const { isAuthenticated } = useAuth();
-    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+    const { isAuthenticated, logout } = useAuth();
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return (
+        <>
+            <header className="navbar navbar-dark bg-dark shadow-sm">
+                <div className="container">
+                    <Link className="navbar-brand fw-semibold" to="/">
+                        Support Ticket Management
+                    </Link>
+                    <button className="btn btn-outline-light btn-sm" type="button" onClick={logout}>
+                        Sign out
+                    </button>
+                </div>
+            </header>
+            <div className="container py-4">
+                <Outlet />
+            </div>
+        </>
+    );
 }

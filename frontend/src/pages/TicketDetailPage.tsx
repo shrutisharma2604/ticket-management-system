@@ -125,88 +125,169 @@ export function TicketDetailPage() {
 
     return (
         <main>
-            <Link to="/">Back to tickets</Link>
-            {isLoading && <p>Loading ticket…</p>}
+            <Link className="text-decoration-none" to="/">← Back to tickets</Link>
+            {isLoading && <p className="mt-4">Loading ticket…</p>}
             <ErrorBanner error={error} />
             {ticket !== null && (
-                <article>
-                    <h1>Ticket details</h1>
-                    <p>Title: {ticket.title}</p>
-                    <p>Description: {ticket.description}</p>
-                    <p>Priority: {ticket.priority}</p>
-                    <p>Assignee: {ticket.assignee ?? "Unassigned"}</p>
-                    <p>Status: {ticket.status}</p>
-                    <p>Created: {ticket.createdAt}</p>
-                    <p>Last changed: {ticket.updatedAt}</p>
-                    <form onSubmit={(event) => void saveDetails(event)} noValidate>
-                        <label htmlFor="edit-title">Title</label>
-                        <input
-                            id="edit-title"
-                            value={ticket.title}
-                            onChange={(event) => setTicket({ ...ticket, title: event.target.value })}
-                        />
-                        <label htmlFor="edit-description">Description</label>
-                        <textarea
-                            id="edit-description"
-                            value={ticket.description}
-                            onChange={(event) => setTicket({ ...ticket, description: event.target.value })}
-                        />
-                        <label htmlFor="edit-priority">Priority</label>
-                        <select
-                            id="edit-priority"
-                            value={ticket.priority}
-                            onChange={(event) => setTicket({
-                                ...ticket,
-                                priority: event.target.value as TicketDetailResponse["priority"],
-                            })}
-                        >
-                            <option value="LOW">Low</option>
-                            <option value="MEDIUM">Medium</option>
-                            <option value="HIGH">High</option>
-                        </select>
-                        <label htmlFor="edit-assignee">Assignee</label>
-                        <input
-                            id="edit-assignee"
-                            value={ticket.assignee ?? ""}
-                            onChange={(event) => setTicket({
-                                ...ticket,
-                                assignee: event.target.value || null,
-                            })}
-                        />
-                        <button type="submit" disabled={isSavingDetails}>
-                            {isSavingDetails ? "Saving…" : "Save details"}
-                        </button>
-                    </form>
-                    <div>
-                        <p>Change status (server enforces allowed transitions):</p>
-                        {ALL_STATUSES.map((status) => (
-                            <button
-                                key={status}
-                                type="button"
-                                disabled={isSavingStatus}
-                                onClick={() => void changeStatus(status)}
-                            >
-                                Move to {status.replaceAll("_", " ")}
-                            </button>
-                        ))}
+                <article className="mt-3">
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                        <div>
+                            <h1 className="h3 mb-1">Ticket details</h1>
+                            <p className="text-body-secondary mb-0">{ticket.title}</p>
+                        </div>
+                        <p className={`badge fs-6 mb-0 ${statusBadgeClass(ticket.status)}`}>
+                            Status: {ticket.status}
+                        </p>
                     </div>
-                    <section>
-                        <h2>Comments</h2>
-                        <CommentList comments={ticket.comments} />
-                        <form onSubmit={(event) => void submitComment(event)} noValidate>
-                            <label htmlFor="comment-body">Add comment</label>
-                            <textarea
-                                id="comment-body"
-                                value={commentBody}
-                                onChange={(event) => setCommentBody(event.target.value)}
-                            />
-                            <button type="submit" disabled={isAddingComment}>
-                                {isAddingComment ? "Adding…" : "Add comment"}
-                            </button>
-                        </form>
-                    </section>
+
+                    <div className="row g-4">
+                        <div className="col-lg-8">
+                            <div className="card border-0 shadow-sm mb-4">
+                                <div className="card-header bg-white fw-semibold py-3">Edit ticket</div>
+                                <div className="card-body p-4">
+                                    <form onSubmit={(event) => void saveDetails(event)} noValidate>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="edit-title">Title</label>
+                                            <input
+                                                className="form-control"
+                                                id="edit-title"
+                                                value={ticket.title}
+                                                onChange={(event) => setTicket({
+                                                    ...ticket,
+                                                    title: event.target.value,
+                                                })}
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label className="form-label" htmlFor="edit-description">
+                                                Description
+                                            </label>
+                                            <textarea
+                                                className="form-control"
+                                                id="edit-description"
+                                                rows={5}
+                                                value={ticket.description}
+                                                onChange={(event) => setTicket({
+                                                    ...ticket,
+                                                    description: event.target.value,
+                                                })}
+                                            />
+                                        </div>
+                                        <div className="row g-3 mb-4">
+                                            <div className="col-md-6">
+                                                <label className="form-label" htmlFor="edit-priority">
+                                                    Priority
+                                                </label>
+                                                <select
+                                                    className="form-select"
+                                                    id="edit-priority"
+                                                    value={ticket.priority}
+                                                    onChange={(event) => setTicket({
+                                                        ...ticket,
+                                                        priority: event.target
+                                                            .value as TicketDetailResponse["priority"],
+                                                    })}
+                                                >
+                                                    <option value="LOW">Low</option>
+                                                    <option value="MEDIUM">Medium</option>
+                                                    <option value="HIGH">High</option>
+                                                </select>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label className="form-label" htmlFor="edit-assignee">
+                                                    Assignee
+                                                </label>
+                                                <input
+                                                    className="form-control"
+                                                    id="edit-assignee"
+                                                    value={ticket.assignee ?? ""}
+                                                    onChange={(event) => setTicket({
+                                                        ...ticket,
+                                                        assignee: event.target.value || null,
+                                                    })}
+                                                />
+                                            </div>
+                                        </div>
+                                        <button className="btn btn-primary" type="submit" disabled={isSavingDetails}>
+                                            {isSavingDetails ? "Saving…" : "Save details"}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <section className="card border-0 shadow-sm">
+                                <div className="card-header bg-white fw-semibold py-3">Comments</div>
+                                <div className="card-body p-4">
+                                    <CommentList comments={ticket.comments} />
+                                    <form
+                                        className="border-top pt-3 mt-3"
+                                        onSubmit={(event) => void submitComment(event)}
+                                        noValidate
+                                    >
+                                        <label className="form-label" htmlFor="comment-body">Add comment</label>
+                                        <textarea
+                                            className="form-control mb-3"
+                                            id="comment-body"
+                                            rows={3}
+                                            value={commentBody}
+                                            onChange={(event) => setCommentBody(event.target.value)}
+                                        />
+                                        <button
+                                            className="btn btn-primary"
+                                            type="submit"
+                                            disabled={isAddingComment}
+                                        >
+                                            {isAddingComment ? "Adding…" : "Add comment"}
+                                        </button>
+                                    </form>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div className="col-lg-4">
+                            <div className="card border-0 shadow-sm mb-4">
+                                <div className="card-header bg-white fw-semibold py-3">Overview</div>
+                                <div className="card-body">
+                                    <p><strong>Priority:</strong> {ticket.priority}</p>
+                                    <p><strong>Assignee:</strong> {ticket.assignee ?? "Unassigned"}</p>
+                                    <p><strong>Created:</strong> {ticket.createdAt}</p>
+                                    <p className="mb-0"><strong>Last changed:</strong> {ticket.updatedAt}</p>
+                                </div>
+                            </div>
+                            <div className="card border-0 shadow-sm">
+                                <div className="card-header bg-white fw-semibold py-3">Change status</div>
+                                <div className="card-body d-grid gap-2">
+                                    <p className="small text-body-secondary">
+                                        The server enforces allowed transitions.
+                                    </p>
+                                    {ALL_STATUSES.map((status) => (
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            key={status}
+                                            type="button"
+                                            disabled={isSavingStatus}
+                                            onClick={() => void changeStatus(status)}
+                                        >
+                                            Move to {status.replaceAll("_", " ")}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </article>
             )}
         </main>
     );
+}
+
+function statusBadgeClass(status: TicketStatus): string {
+    const classes: Record<TicketStatus, string> = {
+        OPEN: "text-bg-primary",
+        IN_PROGRESS: "text-bg-warning",
+        RESOLVED: "text-bg-success",
+        CLOSED: "text-bg-secondary",
+        CANCELLED: "text-bg-danger",
+    };
+    return classes[status];
 }

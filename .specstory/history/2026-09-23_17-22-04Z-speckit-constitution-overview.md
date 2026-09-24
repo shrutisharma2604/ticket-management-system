@@ -11141,3 +11141,11 @@ _**Agent (auto-smart)**_
 `allowImportingTsExtensions` in `frontend/tsconfig.node.json` requires `noEmit` or `emitDeclarationOnly`. That project is `composite` (so it emits), and `vite.config.ts` never imports `.ts` paths, so the flag was removed.
 
 `npm run build` now completes: `tsc -b` and Vite both succeed.
+
+---
+
+_**User**_
+
+Restyle the frontend using Bootstrap 5 via CDN (add the CDN link in index.html). Give it a proper dashboard look: a top header bar with the app title and sign out button, cards/table with proper spacing and borders for the ticket list, colored badges for status (OPEN=blue, IN_PROGRESS=yellow, RESOLVED=green, CLOSED=gray, CANCELLED=red), and styled buttons and form inputs throughout. Keep all existing functionality exactly the same — only change styling/layout, no logic changes. Do not touch any backend files.
+
+validate all the test cases after the change

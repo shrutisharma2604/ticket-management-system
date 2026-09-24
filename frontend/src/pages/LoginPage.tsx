@@ -27,36 +27,49 @@ export function LoginPage() {
     }
 
     return (
-        <main>
-            <h1>Support Ticket Management</h1>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="username">Username</label>
-                <input
-                    id="username"
-                    name="username"
-                    autoComplete="username"
-                    required
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                />
+        <main className="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+            <div className="card border-0 shadow-sm w-100" style={{ maxWidth: "440px" }}>
+                <div className="card-body p-4 p-md-5">
+                    <div className="text-center mb-4">
+                        <h1 className="h3 mb-2">Support Ticket Management</h1>
+                        <p className="text-body-secondary mb-0">Sign in to access your dashboard.</p>
+                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label className="form-label" htmlFor="username">Username</label>
+                            <input
+                                className="form-control"
+                                id="username"
+                                name="username"
+                                autoComplete="username"
+                                required
+                                value={username}
+                                onChange={(event) => setUsername(event.target.value)}
+                            />
+                        </div>
 
-                <label htmlFor="password">Password</label>
-                <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                />
+                        <div className="mb-4">
+                            <label className="form-label" htmlFor="password">Password</label>
+                            <input
+                                className="form-control"
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="current-password"
+                                required
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                            />
+                        </div>
 
-                {error !== null && <p role="alert">{error}</p>}
+                        {error !== null && <p className="alert alert-danger" role="alert">{error}</p>}
 
-                <button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Signing in…" : "Sign in"}
-                </button>
-            </form>
+                        <button className="btn btn-primary w-100" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? "Signing in…" : "Sign in"}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </main>
     );
 }
